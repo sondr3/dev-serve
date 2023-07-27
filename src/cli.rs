@@ -13,10 +13,13 @@ pub struct Cli {
     /// Auto-reload and watch directory
     #[arg(short, long, default_value_t = true)]
     pub reload: bool,
+    /// Verbose output
+    #[arg(short, long)]
+    pub verbose: bool,
     #[arg(short, long, value_enum)]
     pub completions: Option<Shell>,
     /// Directory to serve
-    pub templates: Option<PathBuf>,
+    pub path: Option<PathBuf>,
 }
 
 pub fn print_completion<G: Generator>(gen: G, app: &mut Command) {
