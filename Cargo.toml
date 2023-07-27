@@ -1,7 +1,7 @@
 [package]
 name = "dev-serve"
 authors = ["Sondre Aasemoen <sondre@eons.io>"]
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 build = "build.rs"
 description = "Spin up a simple static site server with live reload"
