@@ -1,7 +1,8 @@
+use std::{env, fs::File, io::Error, path::Path};
+
 use clap::{CommandFactory, ValueEnum};
 use clap_complete::generate_to;
 use clap_mangen::Man;
-use std::{env, fs::File, io::Error, path::Path};
 
 include!("src/cli.rs");
 

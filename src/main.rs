@@ -1,12 +1,11 @@
+use std::{ffi::OsString, thread};
+
 use crate::cli::{print_completion, Cli};
-use std::ffi::OsString;
-use std::thread;
 
 mod cli;
 mod server;
 mod watcher;
 
-use crate::watcher::start_live_reload;
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use time::UtcOffset;
@@ -14,6 +13,8 @@ use tokio::sync::broadcast;
 use tracing_subscriber::{
     fmt::time::OffsetTime, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter,
 };
+
+use crate::watcher::start_live_reload;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Event {
@@ -60,7 +61,7 @@ async fn main() -> Result<()> {
         Some(exts) => exts.iter().map(OsString::from).collect(),
     };
 
-    let watcher_root = root.clone();
+    let watcher_root = root.clone().canonicalize()?;
     let watcher_tx = tx.clone();
     let watcher = thread::spawn(move || start_live_reload(&watcher_root, &extensions, &watcher_tx));
 

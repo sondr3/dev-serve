@@ -1,7 +1,7 @@
+use std::{io, path::PathBuf};
+
 use clap::{Command, Parser};
 use clap_complete::{generate, Generator, Shell};
-use std::io;
-use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[clap(name = "dev-serve", about, version, author)]
