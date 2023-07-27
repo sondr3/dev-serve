@@ -1,7 +1,7 @@
 <h1 align="center">dev-serve</h1>
 <p align="center">
     <a href="https://github.com/sondr3/dev-serve/actions"><img alt="GitHub Actions Status" src="https://github.com/sondr3/dev-serve/workflows/pipeline/badge.svg" /></a>
-    <a href="https://crates.io/crates/dev-serve-generator"><img alt="Crates" src="https://img.shields.io/crates/v/dev-serve-generator.svg" /></a>
+    <a href="https://crates.io/crates/dev-serve"><img alt="Crates" src="https://img.shields.io/crates/v/dev-serve.svg" /></a>
 </p>
 
 <p align="center">
