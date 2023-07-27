@@ -160,5 +160,3 @@ jobs:
             dev-serve-x86_64-pc-windows-msvc.zip
             dev-serve-x86_64-unknown-linux-gnu.tar.gz
             dev-serve-x86_64-unknown-linux-musl.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
