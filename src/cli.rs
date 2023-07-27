@@ -13,6 +13,11 @@ pub struct Cli {
     /// Auto-reload and watch directory
     #[arg(short, long, default_value_t = true)]
     pub reload: bool,
+    /// File extensions to watch
+    ///
+    /// Must be without the leading `.` and separated by commas, e.g. `html,css,js`
+    #[arg(short, long)]
+    pub extensions: Option<Vec<String>>,
     /// Verbose output
     #[arg(short, long)]
     pub verbose: bool,

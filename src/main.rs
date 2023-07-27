@@ -1,8 +1,12 @@
 use crate::cli::{print_completion, Cli};
+use std::ffi::OsString;
+use std::thread;
 
 mod cli;
 mod server;
+mod watcher;
 
+use crate::watcher::start_live_reload;
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use time::UtcOffset;
@@ -15,6 +19,16 @@ use tracing_subscriber::{
 pub enum Event {
     Reload,
     Shutdown,
+}
+
+fn default_extensions() -> Vec<OsString> {
+    [
+        "html", "css", "js", "png", "jpg", "svg", "txt", "rss", "json", "ico", "woff", "woff2",
+        "ttf", "eot", "otf",
+    ]
+    .iter()
+    .map(OsString::from)
+    .collect()
 }
 
 #[tokio::main]
@@ -39,11 +53,21 @@ async fn main() -> Result<()> {
         return Ok(());
     }
 
-    let root = opts.path.unwrap_or(std::env::current_dir()?);
-
     let (tx, _rx) = broadcast::channel(100);
+    let root = opts.path.unwrap_or(std::env::current_dir()?);
+    let extensions = match opts.extensions {
+        None => default_extensions(),
+        Some(exts) => exts.iter().map(OsString::from).collect(),
+    };
+
+    let watcher_root = root.clone();
+    let watcher_tx = tx.clone();
+    let watcher = thread::spawn(move || start_live_reload(&watcher_root, &extensions, &watcher_tx));
+
     tracing::info!("Serving site at http://localhost:{}/...", opts.port);
     server::create(&root, tx).await?;
+
+    watcher.join().unwrap().unwrap();
 
     Ok(())
 }
