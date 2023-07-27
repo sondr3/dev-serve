@@ -65,7 +65,7 @@ async fn main() -> Result<()> {
     let watcher = thread::spawn(move || start_live_reload(&watcher_root, &extensions, &watcher_tx));
 
     tracing::info!("Serving site at http://localhost:{}/...", opts.port);
-    server::create(&root, tx).await?;
+    server::create(&root, opts.port, tx).await?;
 
     watcher.join().unwrap().unwrap();
 

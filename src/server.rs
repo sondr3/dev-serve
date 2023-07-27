@@ -20,8 +20,8 @@ use tower_http::{services::ServeDir, trace::TraceLayer};
 
 use crate::Event;
 
-pub async fn create(root: &Path, tx: Sender<Event>) -> Result<()> {
-    let addr = SocketAddr::from((Ipv4Addr::LOCALHOST, 3000));
+pub async fn create(root: &Path, port: u16, tx: Sender<Event>) -> Result<()> {
+    let addr = SocketAddr::from((Ipv4Addr::LOCALHOST, port));
     axum::Server::bind(&addr)
         .serve(
             router(root, tx)
@@ -48,7 +48,7 @@ async fn ws_handler(
 }
 
 async fn handle_socket(mut socket: WebSocket, tx: Sender<Event>, addr: SocketAddr) {
-    tracing::info!("{addr} connected");
+    tracing::debug!("{addr} connected");
     let mut rx = tx.subscribe();
 
     while let Ok(event) = rx.recv().await {
