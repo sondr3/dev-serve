@@ -3,6 +3,26 @@
   let shouldReload = false;
   let socket = null;
 
+  const exponentialBackoff = (backoff, deadline) => {
+    let n = 0;
+    let sum = 0;
+
+    return function waitTime() {
+      let wait = Math.pow(2, n++);
+      wait = Math.min(wait, backoff);
+      sum += wait;
+      if (sum > deadline) {
+        return 6400;
+      }
+      wait += Math.random();
+      return Math.ceil(wait * 1000);
+    };
+  };
+
+  let backoff = 64;
+  let deadline = 600;
+  let retryWait = exponentialBackoff(backoff, deadline);
+
   const connect = () => {
     socket = new WebSocket(url);
 
@@ -24,8 +44,9 @@
           break;
         case "shutdown":
           socket.close(1000, "Waiting for server to restart");
-          setTimeout(connect, 2000);
           shouldReload = true;
+
+          setTimeout(connect, retryWait());
           break;
         default:
           console.error(`Unknown websocket message: ${event.data}`);
@@ -34,10 +55,8 @@
 
     socket.addEventListener("close", (e) => {
       console.log(`Socket closed, attempting to reconnect: ${e.reason}`);
-      socket = null;
       shouldReload = true;
-
-      setTimeout(connect, 2000);
+      setTimeout(connect, retryWait());
     });
 
     socket.addEventListener("error", (e) => {
