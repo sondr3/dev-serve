@@ -1,3 +1,14 @@
+## v0.1.2
+> 2023-07-28
+
+## Summary
+
+Add exponential backoff to WebSocket reloader.
+
+### Commits
+- [[`eae841a`](https://github.com/sondr3/dev-serve)] Add exponential backoff
+
+
 ## v0.1.1
 > 2023-07-27
 
@@ -25,4 +36,3 @@ Initial basic release.
 - [[`553a252`](https://github.com/sondr3/dev-serve)] Initial server
 - [[`3ace566`](https://github.com/sondr3/dev-serve)] Add initial CLI
 - [[`3c4651c`](https://github.com/sondr3/dev-serve)] In the beginning there was darkness...
-
