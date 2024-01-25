@@ -56,10 +56,9 @@ async fn main() -> Result<()> {
 
     let (tx, _rx) = broadcast::channel(100);
     let root = opts.path.unwrap_or(std::env::current_dir()?);
-    let extensions = match opts.extensions {
-        None => default_extensions(),
-        Some(exts) => exts.iter().map(OsString::from).collect(),
-    };
+    let extensions = opts.extensions.map_or_else(default_extensions, |exts| {
+        exts.iter().map(OsString::from).collect()
+    });
 
     let watcher_root = root.clone().canonicalize()?;
     let watcher_tx = tx.clone();

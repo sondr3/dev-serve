@@ -12,17 +12,17 @@ readme = "README.md"
 repository = "https://github.com/sondr3/dev-serve"
 
 [dependencies]
-anyhow = "1.0.72"
-axum = { version = "0.6.18", features = ["ws"] }
+anyhow = "1.0.75"
+axum = { version = "0.7.4", features = ["ws"] }
 clap = { version = "4", features = ["derive"] }
 clap_complete = "4"
 futures = "0.3.28"
-notify = "6.0.1"
-time = { version = "0.3.22", features = ["local-offset"] }
-tokio = { version = "1.29.1", features = ["full"] }
+notify = "6.1.1"
+time = { version = "0.3.30", features = ["local-offset"] }
+tokio = { version = "1.33.0", features = ["full"] }
 tower = { version = "0.4.13", default-features = false, features = ["tracing"] }
-tower-http = { version = "0.4.1", features = ["trace"] }
-tracing = "0.1.37"
+tower-http = { version = "0.5.1", features = ["trace"] }
+tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.17", features = ["env-filter", "time"] }
 
 [build-dependencies]

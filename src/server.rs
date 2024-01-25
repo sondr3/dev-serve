@@ -10,7 +10,7 @@ use std::{
 
 use anyhow::{Context, Result};
 use axum::{
-    body::{boxed, Body},
+    body::Body,
     extract::{
         ws::{Message, WebSocket},
         ConnectInfo, State, WebSocketUpgrade,
@@ -21,7 +21,7 @@ use axum::{
     Router,
 };
 use futures::future::BoxFuture;
-use tokio::sync::broadcast::Sender;
+use tokio::{net::TcpListener, sync::broadcast::Sender};
 use tower::{Layer, Service};
 use tower_http::trace::TraceLayer;
 
@@ -30,15 +30,16 @@ use crate::Event;
 pub async fn create(root: &Path, port: u16, tx: Sender<Event>) -> Result<()> {
     let addr = SocketAddr::from((Ipv4Addr::LOCALHOST, port));
     let root = root.canonicalize()?;
-    axum::Server::bind(&addr)
-        .serve(
-            router(&root, port, tx)
-                .layer(TraceLayer::new_for_http())
-                .layer(StaticDirLayer { root })
-                .into_make_service_with_connect_info::<SocketAddr>(),
-        )
-        .await
-        .context("Failed to start server")
+    let listener = TcpListener::bind(&addr).await?;
+    axum::serve(
+        listener,
+        router(&root, port, tx)
+            .layer(TraceLayer::new_for_http())
+            .layer(StaticDirLayer { root })
+            .into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await
+    .context("Failed to start server")
 }
 
 fn router(_root: &Path, port: u16, tx: Sender<Event>) -> Router {
@@ -92,10 +93,7 @@ where
         let (path, is_html) = if path.exists() && path.is_dir() {
             (path.join("index.html"), true)
         } else {
-            (
-                path.clone(),
-                path.extension().map(|e| e == "html").unwrap_or(false),
-            )
+            (path.clone(), path.extension().is_some_and(|e| e == "html"))
         };
 
         let file = if is_html {
@@ -110,23 +108,20 @@ where
             read(&path)
         };
 
-        let file = match file {
-            Ok(file) => file,
-            Err(_) => {
-                let future = self.inner.call(req);
-                return Box::pin(async move {
-                    let response: Response = future.await?;
-                    Ok(response)
-                });
-            }
+        let Ok(file) = file else {
+            let future = self.inner.call(req);
+            return Box::pin(async move {
+                let response: Response = future.await?;
+                Ok(response)
+            });
         };
 
-        let res = Response::builder()
+        let response = Response::builder()
             .status(StatusCode::OK)
             .body(Body::from(file))
             .unwrap();
 
-        Box::pin(async move { Ok(res.map(boxed)) })
+        Box::pin(async move { Ok(response) })
     }
 }
 
@@ -158,7 +153,7 @@ async fn handle_socket(mut socket: WebSocket, tx: Sender<Event>, addr: SocketAdd
             Event::Reload => socket.send(Message::Text("reload".to_string())).await,
             Event::Shutdown => socket.send(Message::Text("shutdown".to_string())).await,
         } {
-            tracing::info!("Failed to send message to {addr}: {e}");
+            tracing::debug!("Failed to send message to {addr}: {e}");
             break;
         }
     }
