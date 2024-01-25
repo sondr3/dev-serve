@@ -1,3 +1,19 @@
+## v0.2.0
+> 2024-01-25
+
+## Summary
+
+One small feature: automatic port selection if the provided port is unavailable. Otherwise
+it's just package updates.
+
+### Commits
+- [[`8016579`](https://github.com/sondr3/dev-serve)] Automatic port finding
+- [[`246598d`](https://github.com/sondr3/dev-serve)] Bump dependencies, fix build errors and new lints
+- [[`e8f7031`](https://github.com/sondr3/dev-serve)] Merge Dependabot GA PRs
+- [[`f92b7bf`](https://github.com/sondr3/dev-serve)] Bump actions/download-artifact from 3 to 4
+- [[`baf54e4`](https://github.com/sondr3/dev-serve)] Bump actions/upload-artifact from 3 to 4
+- [[`a822cd6`](https://github.com/sondr3/dev-serve)] Bump actions/checkout from 3 to 4
+
 ## v0.1.2
 > 2023-07-28
 
