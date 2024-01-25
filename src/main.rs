@@ -1,6 +1,9 @@
 use std::{ffi::OsString, thread};
 
-use crate::cli::{print_completion, Cli};
+use crate::{
+    cli::{print_completion, Cli},
+    server::find_available_port,
+};
 
 mod cli;
 mod server;
@@ -64,8 +67,13 @@ async fn main() -> Result<()> {
     let watcher_tx = tx.clone();
     let watcher = thread::spawn(move || start_live_reload(&watcher_root, &extensions, &watcher_tx));
 
-    tracing::info!("Serving site at http://localhost:{}/...", opts.port);
-    server::create(&root, opts.port, tx).await?;
+    let port = find_available_port(opts.port).unwrap_or_else(|| {
+        tracing::error!("Failed to find available port");
+        std::process::exit(1);
+    });
+
+    tracing::info!("Serving site at http://localhost:{}", port);
+    server::create(&root, port, tx).await?;
 
     watcher.join().unwrap().unwrap();
 

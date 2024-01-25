@@ -3,7 +3,7 @@
 use std::{
     fmt::Debug,
     fs::{read, read_to_string},
-    net::{Ipv4Addr, SocketAddr},
+    net::{Ipv4Addr, SocketAddr, TcpListener as StdListener},
     path::{Path, PathBuf},
     task::Poll,
 };
@@ -26,6 +26,10 @@ use tower::{Layer, Service};
 use tower_http::trace::TraceLayer;
 
 use crate::Event;
+
+pub fn find_available_port(start: u16) -> Option<u16> {
+    (start..start + 100).find(|port| StdListener::bind(("127.0.0.1", *port)).is_ok())
+}
 
 pub async fn create(root: &Path, port: u16, tx: Sender<Event>) -> Result<()> {
     let addr = SocketAddr::from((Ipv4Addr::LOCALHOST, port));
