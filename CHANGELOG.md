@@ -6,8 +6,8 @@
 Build for M1 macOS targets.
 
 ### Commits
-- [[`5abf3a1`](https://github.com/sondr3/dev-serve)] Build on macOS 14 using M1
-- [[`94700fe`](https://github.com/sondr3/dev-serve)] Fix commit links in CHANGELOG.md
+- [[`5abf3a1`](https://github.com/sondr3/dev-serve/commit/5abf3a1)] Build on macOS 14 using M1
+- [[`94700fe`](https://github.com/sondr3/dev-serve/commit/94700fe)] Fix commit links in CHANGELOG.md
 
 ## v0.2.0
 > 2024-01-25
